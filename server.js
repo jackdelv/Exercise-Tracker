@@ -26,14 +26,22 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/views/index.html')
 });
 
-app.post('/api/users', function(req, res, done){
-  var uname = req.body.uid;
-  var user = new User({_id: Math.floor(Math.random() * 100000000000000000).toString(16), username: uname});
+app.route('/api/users').get(function(req, res, done) {
+  User.find({}, function(err, data) {
+    if (err) return console.error(err);
+    res.json(data);
+    done(null, data);
+  })}).post(function(req, res, done){
+  var uname = req.body.username;
+  var uid = Math.floor(Math.random() * 100000000000000000).toString(16);
+  var user = new User({_id: uid, username: uname});
   user.save(function(err, data){
     if (err) return console.error(err);
+    res.json({_id: uid, username: uname});
     done(null, data);
   });
 });
+
 
 
 
